@@ -1,0 +1,46 @@
+execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory subdir)
+file(MAKE_DIRECTORY subdir)
+
+
+execute_process(
+  COMMAND
+    "@CMAKE_COMMAND@"
+    -G "@CMAKE_GENERATOR@"
+    "-Dproject_root=@PROJECT_SOURCE_DIR@"
+    "-DCMAKE_TOOLCHAIN_FILE=@CMAKE_TOOLCHAIN_FILE@"
+    "@PROJECT_SOURCE_DIR@/test/subdir"
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY subdir
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND "@CMAKE_COMMAND@" --build .
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY subdir
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND "@CMAKE_COMMAND@" --build . --target test
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY subdir
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()

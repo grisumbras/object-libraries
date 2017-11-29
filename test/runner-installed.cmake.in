@@ -1,0 +1,78 @@
+execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory installed)
+file(MAKE_DIRECTORY installed/root-bin installed/root-prefix installed/test)
+
+
+execute_process(
+  COMMAND
+    "@CMAKE_COMMAND@"
+    -G "@CMAKE_GENERATOR@"
+    "-DCMAKE_TOOLCHAIN_FILE=@CMAKE_TOOLCHAIN_FILE@"
+    -DCMAKE_INSTALL_PREFIX=../root-prefix
+    -DBUILD_TESTING=OFF
+    "@PROJECT_SOURCE_DIR@"
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY installed/root-bin
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND "@CMAKE_COMMAND@" --build . --target install
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY installed/root-bin
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND
+    "@CMAKE_COMMAND@"
+    -G "@CMAKE_GENERATOR@"
+    "-DCMAKE_TOOLCHAIN_FILE=@CMAKE_TOOLCHAIN_FILE@"
+    "-DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_SOURCE_DIR}/installed/root-prefix"
+    "@PROJECT_SOURCE_DIR@/test/installed"
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY installed/test
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND "@CMAKE_COMMAND@" --build .
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY installed/test
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
+
+
+execute_process(
+  COMMAND "@CMAKE_COMMAND@" --build . --target test
+  RESULT_VARIABLE status
+  OUTPUT_VARIABLE errors
+  ERROR_VARIABLE errors
+  WORKING_DIRECTORY installed/test
+)
+
+if (status)
+  message(FATAL_ERROR "${errors}")
+endif()
