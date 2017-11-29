@@ -79,6 +79,7 @@ add_subdirectory(path/to/object-libraries/sources object-libraries)
 ### add_object_files
 
 `add_object_files(<target> [NO_INCLUDE_CURRENT_DIR] source1 [source2 ...])`
+
 Adds two targets: a backend **object library**, that compiles specified sources
 into object files, and a frontend **interface library**, called `<target>`,
 that could be used by dependent targets to link with those object files. If
@@ -102,6 +103,7 @@ target_link_libraries(foo PRIVATE foo_objs)
 ### get_underlying_objects
 
 `get_underlying_objects(<var> <target>)`
+
 Sets `<var>` to the name of the backend object library corresponding to the
 interface library `<target>`, that was created by `add_object_files`.
 Usually, you only have to deal with the frontend target, but for the cases,
